@@ -1,94 +1,86 @@
-import java.util.Random;
 import java.util.Scanner;
 
-public class RockPaperScissors {
+public class PalindromeChecker {
 
-    static String generateComputerMove(Random random) {
-        String[] moves = {"Rock", "Paper", "Scissors"};
-        int index = random.nextInt(3);
-        return moves[index];
+    static boolean isPalindromeIterative(String text) {
+
+        int left = 0;
+        int right = text.length() - 1;
+
+        while (left < right) {
+
+            if (text.charAt(left) != text.charAt(right)) {
+                return false;
+            }
+
+            left++;
+            right--;
+        }
+
+        return true;
     }
 
-    static String playRound(String playerMove, String computerMove) {
+    static boolean isPalindromeRecursive(String text) {
 
-        if (!playerMove.equals("Rock") &&
-            !playerMove.equals("Paper") &&
-            !playerMove.equals("Scissors")) {
-            return "Invalid Move";
+        if (text.length() <= 1) {
+            return true;
         }
 
-        if (playerMove.equals(computerMove)) {
-            return "Draw";
+        if (text.charAt(0) != text.charAt(text.length() - 1)) {
+            return false;
         }
 
-        if ((playerMove.equals("Rock") && computerMove.equals("Scissors")) ||
-            (playerMove.equals("Paper") && computerMove.equals("Rock")) ||
-            (playerMove.equals("Scissors") && computerMove.equals("Paper"))) {
-            return "Player Wins";
+        String middleText = text.substring(1, text.length() - 1);
+
+        return isPalindromeRecursive(middleText);
+    }
+
+    static boolean isPalindromeArrayReversal(String text) {
+
+        char[] characters = text.toCharArray();
+
+        int left = 0;
+        int right = characters.length - 1;
+
+        while (left < right) {
+
+            char temporary = characters[left];
+            characters[left] = characters[right];
+            characters[right] = temporary;
+
+            left++;
+            right--;
         }
 
-        return "Computer Wins";
+        String reversedText = new String(characters);
+
+        return text.equals(reversedText);
+    }
+
+    static void displayResults(String text) {
+
+        boolean iterativeResult = isPalindromeIterative(text);
+        boolean recursiveResult = isPalindromeRecursive(text);
+        boolean arrayResult = isPalindromeArrayReversal(text);
+
+        System.out.println("Iterative: "
+                + (iterativeResult ? "Palindrome" : "Not Palindrome"));
+
+        System.out.println("Recursive: "
+                + (recursiveResult ? "Palindrome" : "Not Palindrome"));
+
+        System.out.println("Array Reversal: "
+                + (arrayResult ? "Palindrome" : "Not Palindrome"));
     }
 
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
-        Random random = new Random();
 
-        int numberOfRounds = 5;
-        int wins = 0;
-        int losses = 0;
-        int draws = 0;
+        System.out.print("Enter a word or text: ");
+        String text = sc.nextLine();
 
-        String[] playerMoves = new String[numberOfRounds];
-        String[] computerMoves = new String[numberOfRounds];
-        String[] results = new String[numberOfRounds];
-
-        for (int round = 0; round < numberOfRounds; round++) {
-
-            System.out.print("Round " + (round + 1)
-                    + " - Enter Rock, Paper or Scissors: ");
-
-            String playerMove = sc.nextLine();
-            String computerMove = generateComputerMove(random);
-
-            String result = playRound(playerMove, computerMove);
-
-            playerMoves[round] = playerMove;
-            computerMoves[round] = computerMove;
-            results[round] = result;
-
-            System.out.println("Computer: " + computerMove);
-            System.out.println("Result: " + result);
-            System.out.println();
-
-            if (result.equals("Player Wins")) {
-                wins++;
-            } else if (result.equals("Computer Wins")) {
-                losses++;
-            } else if (result.equals("Draw")) {
-                draws++;
-            }
-        }
-
-        double winPercentage = ((double) wins / numberOfRounds) * 100;
-
-        System.out.println("Final Summary");
-        System.out.println("---------------------------------------------");
-        System.out.println("Round\tPlayer\t\tComputer\tResult");
-
-        for (int round = 0; round < numberOfRounds; round++) {
-            System.out.println((round + 1) + "\t"
-                    + playerMoves[round] + "\t\t"
-                    + computerMoves[round] + "\t\t"
-                    + results[round]);
-        }
-
-        System.out.println("---------------------------------------------");
-        System.out.println("Wins: " + wins);
-        System.out.println("Losses: " + losses);
-        System.out.println("Draws: " + draws);
-        System.out.println("Win Percentage: " + winPercentage + "%");
+        displayResults(text);
 
         sc.close();
     }
